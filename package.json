@@ -39,6 +39,7 @@
     "node-uuid": "1.x.x",
     "primus": "4.x.x",
     "primus-rooms": "3.x.x",
+    "require-sql": "1.x.x",
     "superagent": "1.x.x",
     "utf-8-validate": "1.x.x",
     "ws": "1.x.x"

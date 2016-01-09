@@ -82,6 +82,9 @@ function start(callback){
     }
     Log.info('system','Main','Start HTTP server');
 
+    Log.info('system','Main','Start Discord bot');
+    require('./server-src/modules/discord').initialize();
+
     // Start
     if(config.isDev){
         Log.info('system','Main','Application started at http://' + config.ip + ':' + config.port);

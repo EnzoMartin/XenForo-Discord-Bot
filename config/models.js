@@ -108,6 +108,7 @@ class Configuration {
         this.socketLogLevel = typeof config.stackError === 'number' ? config.stackError : 1;
         this.expressLogLevel = config.expressLogLevel || 'dev';
         this.databaseConfig = config.databaseConfig || {};
+        this.discord = config.discord || {};
     }
 
     constructor (config){

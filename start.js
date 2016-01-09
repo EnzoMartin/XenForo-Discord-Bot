@@ -1,3 +1,4 @@
+require('require-sql');
 const startup = process.hrtime();
 const Log = require('./server-src/modules/logging');
 const fs = require('fs');
