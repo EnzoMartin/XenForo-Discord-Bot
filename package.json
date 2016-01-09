@@ -1,0 +1,49 @@
+{
+  "name": "xenforo-web-chat",
+  "description": "WebSocket-based XenForo web chat",
+  "version": "1.0.0000",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/EnzoMartin/XenForo-Embedded-Chat.git"
+  },
+  "license": "MIT",
+  "author": "Enzo Martin <enzo.r.martin@gmail.com>",
+  "contributors": [
+    {
+      "name": "Enzo Martin",
+      "email": "enzo.r.martin@gmail.com"
+    }
+  ],
+  "engines": {
+    "node": ">=5.4.0"
+  },
+  "main": "start.js",
+  "scripts": {
+    "start": "node start.js",
+    "test": "node test.js"
+  },
+  "dependencies": {
+    "async": "1.x.x",
+    "body-parser": "1.x.x",
+    "bufferutil": "1.x.x",
+    "compression": "1.x.x",
+    "discord.js": "5.x.x",
+    "express": "4.x.x",
+    "ioredis": "1.x.x",
+    "lodash": "3.x.x",
+    "moment": "2.x.x",
+    "morgan": "1.x.x",
+    "mysql": "2.x.x",
+    "nanotimer": "0.3.x",
+    "node-statsd": "0.1.x",
+    "node-uuid": "1.x.x",
+    "primus": "4.x.x",
+    "primus-rooms": "3.x.x",
+    "superagent": "1.x.x",
+    "utf-8-validate": "1.x.x",
+    "ws": "1.x.x"
+  },
+  "optionalDependencies": {
+    "usage": "0.7.x"
+  }
+}
