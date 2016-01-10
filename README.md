@@ -1,13 +1,14 @@
 [![Dependency status][david-dm-image]][david-dm-url] [![devDependency status][david-dm-dev-image]][david-dm-dev-url] [![optionalDependency Status][david-dm-optional-image]][david-dm-optional-url] 
 
 * [First time install for Development](#first-time-install-for-development)
-* [Production Setup](#production-setup)
-* [Forum Setup](#form-setup)
-* [Discord Setup](#discord-setup)
+* [Production setup](#production-setup)
+* [Forum setup](#form-setup)
+* [Discord setup](#discord-setup)
+* [Group / Roles setup](#group-roles-setup)
 * [Editing the configuration options](#editing-the-configuration-options)
     * [Development](#development)
     * [Others](#others)
-* [Environment Variables](#environment-variables)
+* [Environment variables](#environment-variables)
 
 
 # First time install for Development
@@ -15,21 +16,22 @@
 * Download and install [NodeJS][nodejs] version `5.x` or higher
 * Download and install [Python 2.7.3][python] and ensure it's available in the command line
 * Download and install [Redis] - [Windows installer][redis-windows]
-* Download and install [MySQL]
+* Download and install [XenForo]
 * Clone the repo
 * Follow the [Node Gyp setup guide]
 * Run `npm install grunt-cli babel-cli mocha node-gyp -g` from an elevated command runner
 * Run `npm install` from the repo base directory
+* Create a [local config file](#development) with the appropriate settings for Discord/XenForo/etc.
 * Run `node start.js` to start the application
 
-# Production Setup
+# Production setup
 Ensure that when installing OS packages you're getting the latest version from the package's maintainer and not the version as part of the OS's default package repository
 
 * Linux OS
 * Download and install [NodeJS][nodejs] version `5.x` or higher
 * Download and install the latest [Redis]
-* Download and install the latest [MySQL]
-    * Create a database and user for the application, make sure to set the appropriate `environment variables`
+* Download and install the latest [XenForo]
+    * Once all set up, make sure to set the appropriate `environment variables`
 * Set up a [DataDog] agent on the server
     * Hook up MySQL, and Redis [integrations] if the server is not already hooked up
 * Set up a process to start/restart `start.js` found in the application root with the `environment variables` mentioned below
@@ -37,7 +39,7 @@ Ensure that when installing OS packages you're getting the latest version from t
     * Application should be restarted if the process exits unexpectedly
     * Log the application output to a file in the application directory
 
-# Forum Setup
+# Forum setup
 
 Add a new custom field on the XenForo forum instance
 
@@ -50,9 +52,13 @@ Add a new custom field on the XenForo forum instance
     * *NOT* viewable on profile pages
     * *NOT* viewable in message user info
     
-# Discord Setup
+# Discord setup
 
 Create a user account for the bot to use, and join it to the discord server you wish it to manage. Ensure it has been granted all permissions on the server/channels
+
+# Group / roles setup
+
+Edit the [Definitions][definitions] file to your heart's content for the roles/channels you'd like to have
 
 ## Unique server ID
 Each server instance needs to have a unique ID for the server it's running on. By default this is a generated GUID, however, you can specify an ID for it to use instead of the generated one by creating a `serverid.txt` file in the root of the application directory containing the ID you'd like it to use to identify itself with. This ID is used in a `server:<id>` tag in all the datadog metrics
@@ -76,7 +82,8 @@ Critical non-development configurations such as the database are controlled thro
 * DISCORD_PASSWORD
 * DISCORD_SERVER
 
-# Environment Variables
+# Environment variables
+
 | Name  | Description |
 | ------------- | ------------- |
 | NODE_ENV | Defaults to `development` for local environment, otherwise set to `production` |
@@ -100,11 +107,13 @@ Critical non-development configurations such as the database are controlled thro
 [python]: http://www.python.org/download/releases/2.7.3#download
 [config.js]:config/config.js
 [local]:config/example.local.js
+[definitions]:config/Definitions.js
 [Redis]:http://redis.io/
 [redis-windows]:https://github.com/MSOpenTech/redis/releases
 [DataDog]:https://app.datadoghq.com/
 [integrations]:https://app.datadoghq.com/account/settings
 [MySQL]:http://www.mysql.com/
+[XenForo]:https://xenforo.com/
 [Node Gyp setup guide]:https://github.com/TooTallNate/node-gyp#installation
 [david-dm-url]:https://david-dm.org/EnzoMartin/XenForo-Discord-Bot
 [david-dm-image]:https://david-dm.org/EnzoMartin/XenForo-Discord-Bot.svg?style=flat-square
