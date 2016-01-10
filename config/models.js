@@ -7,12 +7,7 @@ const fs = require('fs');
 const uuid = require('node-uuid');
 const path = require('path');
 const Log = require('../server-src/modules/logging');
-
 const rootPath = path.normalize(__dirname + '/..');
-const secret = process.env.SECRET || 'c0g8+em8x%@=45%^kdrn=&+$1qgw91dsn@a6z3pwoyx_&y++fs';
-const sessionKeyPrefix = 'cec:session-v1:';
-const cookieSid = 'criticaledgechat.sid';
-const allowedImageExtensions = ['jpg','png','jpeg','gif'];
 
 function createServerId() {
     var id = uuid.v4();
@@ -83,21 +78,24 @@ class Redis {
     }
 }
 
+class Discord {
+    constructor (config) {
+        this.serverName = config.serverName;
+        this.email = config.email;
+        this.password = config.password;
+    }
+}
+
 class Configuration {
     setBaseConfig (config) {
         this.root = config.rootPath || rootPath;
-        this.cookieSid = config.cookieSid || cookieSid;
-        this.sessionKeyPrefix = config.sessionKeyPrefix || sessionKeyPrefix;
-        this.secret = config.secret || secret;
         this.serverId = config.serverId || serverId;
         this.version = config.version || pjson.version;
-        this.allowedImageExtensions = config.allowedImageExtensions || allowedImageExtensions;
         this.ip = config.ip || ip;
         this.env = config.env || 'development';
         this.port = config.port || process.env.PORT || 3000;
         this.url = config.url || process.env.MOCHA_URL || 'http://localhost';
         this.reporter = config.reporter || process.env.MOCHA_REPORTER || 'spec';
-        this.redisConfig = config.redisConfig || {};
         this.isDev = typeof config.isDev === 'boolean' ? config.isDev : true;
         this.isProd = typeof config.isProd === 'boolean' ? config.isProd : false;
         this.stackError = typeof config.stackError === 'boolean' ? config.stackError : true;
@@ -107,8 +105,10 @@ class Configuration {
         this.datadogMock = typeof config.datadogMock === 'boolean' ? config.datadogMock :true;
         this.socketLogLevel = typeof config.stackError === 'number' ? config.stackError : 1;
         this.expressLogLevel = config.expressLogLevel || 'dev';
+
+        this.redisConfig = config.redisConfig || {};
         this.databaseConfig = config.databaseConfig || {};
-        this.discord = config.discord || {};
+        this.discordConfig = config.discordConfig || false;
     }
 
     constructor (config){
@@ -116,11 +116,13 @@ class Configuration {
 
         this.db = new Database(this.databaseConfig);
         this.redis = new Redis(this.redisConfig);
+        this.discord = new Discord(this.discordConfig);
     }
 }
 
 module.exports = {
     Database,
     Redis,
+    Discord,
     Configuration
 };

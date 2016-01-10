@@ -1,10 +1,10 @@
 {
-  "name": "xenforo-web-chat",
-  "description": "WebSocket-based XenForo web chat",
+  "name": "xenforo-discord-bot",
+  "description": "XenForo Discord Bot",
   "version": "1.0.0000",
   "repository": {
     "type": "git",
-    "url": "https://github.com/EnzoMartin/XenForo-Embedded-Chat.git"
+    "url": "https://github.com/EnzoMartin/XenForo-Discord-Bot.git"
   },
   "license": "MIT",
   "author": "Enzo Martin <enzo.r.martin@gmail.com>",
@@ -19,8 +19,7 @@
   },
   "main": "start.js",
   "scripts": {
-    "start": "node start.js",
-    "test": "node test.js"
+    "start": "node start.js"
   },
   "dependencies": {
     "async": "1.x.x",
@@ -29,6 +28,7 @@
     "compression": "1.x.x",
     "discord.js": "5.x.x",
     "express": "4.x.x",
+    "hiredis": "0.4.x",
     "ioredis": "1.x.x",
     "lodash": "3.x.x",
     "moment": "2.x.x",

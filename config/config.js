@@ -11,7 +11,7 @@ var configs = {
         databaseConfig: {
             user: 'root',
             password: 'root',
-            database: 'xenforo_criticaledge'
+            database: 'xenforo'
         },
         prettyHTML: true
     },
@@ -67,28 +67,22 @@ module.exports = new Models.Configuration(configs.development);
  */
 module.exports.initialize = function(environment){
     Log.info('system','Config','Setting config');
-    var isDev = environment === 'development';
     var config = configs[environment];
 
     if(!config) {
         Log.die('system','Config','No "' + environment + '" environment configuration exists');
     }
 
-    if(isDev){
+    if(config.isDev){
         // Load the config overrides for development environment
-        var localConfig = false;
         try {
-            localConfig = require('./local');
+            configTraverse(config,require('./local'));
         } catch (err){
             // Ignore
         }
-
-        if(localConfig){
-            configTraverse(config,localConfig);
-        }
     }
 
-    var configuration = new Models.Configuration(config);
+    const configuration = new Models.Configuration(config);
 
     module.exports = configuration;
     return configuration;
