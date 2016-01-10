@@ -76,17 +76,6 @@ Client.on('message', function(message){
         }
 
         console.log(message.author.name,message.content);
-    } else if (message.author !== BotUser){
-        var username = message.author.name.toLowerCase();
-        if(username.indexOf('adri') !== -1){
-            if(Math.round(Math.random() * 100) > 99){
-                Client.deleteMessage(message,function(err){
-                    if(!err){
-                        Client.sendMessage(message.channel,'ERROR - Message from ' + message.author + ' deleted accidentally');
-                    }
-                });
-            }
-        }
     }
 });
 
@@ -180,6 +169,7 @@ Client.on('ready', () => {
         }
     });
 
+    // TODO: Run through users and ensure they have correct roles
     //console.log('users',Client.users);
     Client.sendMessage(Channel, 'Bot connected and ready', false, function(err){
         if(err){
