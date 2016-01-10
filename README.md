@@ -1,5 +1,9 @@
 [![Dependency status][david-dm-image]][david-dm-url] [![devDependency status][david-dm-dev-image]][david-dm-dev-url] [![optionalDependency Status][david-dm-optional-image]][david-dm-optional-url] 
 
+# XenForo Discord Bot
+
+This is a XenForo Discord bot that manages the users in your Discord server, granting them access to the channels and roles based off their permissions on the related XenForo forum. Users will be unable to chat if they're not a registered member of the forum. Forum Moderators and Admins will be granted their respective roles on Discord.
+
 * [First time install for Development](#first-time-install-for-development)
 * [Production setup](#production-setup)
 * [Forum setup](#form-setup)
