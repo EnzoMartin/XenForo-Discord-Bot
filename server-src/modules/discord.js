@@ -86,8 +86,6 @@ Client.on('ready', () => {
 
     var Channels = Server.channels;
     var Channel = Channels.find((channel) => channel.name.indexOf('bot-testing') !== -1);
-    var TextChannels = Channels.filter((channel) => channel.type === 'text');
-    var VoiceChannels = Channels.filter((channel) => channel.type === 'voice');
     var Roles = Server.roles;
 
     var addChannels = Definitions.channels.reduce(function(toAdd,channel){
@@ -97,7 +95,15 @@ Client.on('ready', () => {
         return toAdd;
     },[]);
 
-    //TODO: Remove channels that don't match those in Definitions?
+    var removeChannels = Channels.filter((item) => !Definitions.channels.find((channel) => channel.name === item.name));
+    async.parallel(removeChannels.map((channel) => function(callback){
+        Client.deleteChannel(channel, callback);
+    }), function(err){
+        if(err){
+            Log.error('system','Discord','Failed to delete some channels',err);
+        }
+    });
+
     async.parallel(addChannels.map((channel) => function(callback){
         Server.createChannel(channel.name, channel.type, callback);
     }), function(err){
