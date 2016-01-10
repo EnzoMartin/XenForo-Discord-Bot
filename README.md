@@ -2,6 +2,8 @@
 
 * [First time install for Development](#first-time-install-for-development)
 * [Production Setup](#production-setup)
+* [Forum Setup](#form-setup)
+* [Discord Setup](#discord-setup)
 * [Editing the configuration options](#editing-the-configuration-options)
     * [Development](#development)
     * [Others](#others)
@@ -35,9 +37,25 @@ Ensure that when installing OS packages you're getting the latest version from t
     * Application should be restarted if the process exits unexpectedly
     * Log the application output to a file in the application directory
 
+# Forum Setup
+
+Add a new custom field on the XenForo forum instance
+
+* Field ID: discordid
+* Title: Discord ID
+* Display Location: Personal Details
+* Field type: Single-line text box
+* General Options:
+    * *NOT* moderator editable
+    * *NOT* viewable on profile pages
+    * *NOT* viewable in message user info
+    
+# Discord Setup
+
+Create a user account for the bot to use, and join it to the discord server you wish it to manage. Ensure it has been granted all permissions on the server/channels
+
 ## Unique server ID
 Each server instance needs to have a unique ID for the server it's running on. By default this is a generated GUID, however, you can specify an ID for it to use instead of the generated one by creating a `serverid.txt` file in the root of the application directory containing the ID you'd like it to use to identify itself with. This ID is used in a `server:<id>` tag in all the datadog metrics
-
 
 # Editing the configuration options
 
@@ -54,6 +72,9 @@ Critical non-development configurations such as the database are controlled thro
 * DB_USER
 * DB_PASSWORD
 * DB_DATABASE
+* DISCORD_EMAIL
+* DISCORD_PASSWORD
+* DISCORD_SERVER
 
 # Environment Variables
 | Name  | Description |
@@ -62,10 +83,13 @@ Critical non-development configurations such as the database are controlled thro
 | SERVER_ENV | Configuration to load, defaults to `development` (set to `production` if not a local development environment) |
 | PORT | Port to start the application on, defaults to `3000` for `development` or `80` otherwise ***optional*** |
 | DB_HOST | Set the HOST for the database to connect to ex: `127.0.0.1` ***optional*** |
-| DB_USER | Set the USERNAME for the database ex: `user` |
+| DB_USER | Set the USERNAME for the database ex: `xenforo-user` |
 | DB_PASSWORD | Set the PASSWORD for the database user |
 | DB_PORT | Set the PORT for the database, defaults to `3306` ***optional*** |
-| DB_DATABASE | Set the DATABASE NAME to connect to ex: `database-name` |
+| DB_DATABASE | Set the DATABASE NAME to connect to ex: `xenforo-database` |
+| DISCORD_EMAIL | Discord user email for the bot to use |
+| DISCORD_PASSWORD | Password associated with the Discord account to use |
+| DISCORD_SERVER | Name of the Discord server the bot is supposed to manage |
 | MOCHA_REPORTER | Used to set the test reporter ***(ONLY USED FOR UNIT TESTS)*** |
 | MOCHA_URL | Used to configure the URL to test on ***(ONLY USED FOR UNIT TESTS)*** |
 | REDIS_HOST | Redis host, defaults to `localhost` ***optional*** |

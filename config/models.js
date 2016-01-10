@@ -80,9 +80,9 @@ class Redis {
 
 class Discord {
     constructor (config) {
-        this.serverName = config.serverName;
-        this.email = config.email;
-        this.password = config.password;
+        this.serverName = config.serverName || process.env.DISCORD_SERVER;
+        this.email = config.email || process.env.DISCORD_EMAIL;
+        this.password = config.password || process.env.DISCORD_PASSWORD;
     }
 }
 
