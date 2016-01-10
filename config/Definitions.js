@@ -62,7 +62,7 @@ module.exports = {
         {
             level: 1,
             hoist: true,
-            color: parseInt('F1C40F', 16),
+            color: parseInt('FFBB00', 16),
             name: 'Member',
             position: 1,
             permissions:{

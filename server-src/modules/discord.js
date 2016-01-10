@@ -106,7 +106,15 @@ Client.on('ready', () => {
         }
     });
 
-    //TODO: Remove roles that don't match those in Definitions?
+    var removeRoles = Roles.filter((item) => !Definitions.roles.find((role) => role.name === item.name));
+    async.parallel(removeRoles.map((role) => function(callback){
+        Client.deleteRole(role, callback);
+    }), function(err){
+        if(err){
+            Log.error('system','Discord','Failed to delete some roles',err);
+        }
+    });
+
     var addOrUpdateRoles = Definitions.roles.reduce(function(toModify, roleDefinition){
         var existingRole = Roles.find((item) => item.name === roleDefinition.name);
         if(existingRole){
