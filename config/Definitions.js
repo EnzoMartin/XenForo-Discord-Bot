@@ -6,7 +6,7 @@ module.exports = {
     },
     channels: [
         {
-            name: 'welcome',
+            name: 'unverified-user',
             type: 'text',
             topic: 'Please verify your user by messaging the EdgyBot',
             deleteAllMessages: true,

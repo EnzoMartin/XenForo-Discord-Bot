@@ -102,6 +102,12 @@ Client.on('ready', () => {
         } else {
             filtered.update.push({existingChannel,channel});
         }
+
+        // Populate the silenced channels list
+        if(channel.deleteAllMessages){
+            SilencedChannels.push(channel.name);
+        }
+
         return filtered;
     },{add:[],update:[]});
 
@@ -118,7 +124,14 @@ Client.on('ready', () => {
     });
 
     async.parallel(addChannels.map((channel) => function(callback){
-        Server.createChannel(channel.name, channel.type, callback);
+        Server.createChannel(channel.name, channel.type, (err,createdChannel) => {
+            if(err){
+                callback(err);
+            } else {
+                // Need to set the topic after creation of the channel
+                Client.setChannelNameAndTopic(createdChannel, channel.name, channel.topic, callback);
+            }
+        });
     }), function(err){
         if(err){
             Log.error('system','Discord','Failed to create some channels',err);
