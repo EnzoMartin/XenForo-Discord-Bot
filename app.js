@@ -83,7 +83,10 @@ function start(callback){
     Log.info('system','Main','Start HTTP server');
 
     Log.info('system','Main','Start Discord bot');
-    require('./server-src/modules/discord').initialize();
+    require('./server-src/modules/discord').initialize(() => {
+        Log.info('system','Main','Binding Discord bot events');
+        require('./server-src/models/discord');
+    });
 
     // Start
     if(config.isDev){
