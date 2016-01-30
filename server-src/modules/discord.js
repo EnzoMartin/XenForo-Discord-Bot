@@ -1,3 +1,4 @@
+'use strict';
 const Discord = require('discord.js');
 const async = require('async');
 const config = require('../../config/config');
@@ -9,25 +10,26 @@ const User = require('../models/user');
 const emailRegex = /(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))/g;
 var BotUser = null;
 var Server = null;
+var SilencedChannels = [];
 
 Client.on('message', function(message){
     if(message.channel.isPrivate && message.author !== BotUser){
         var userId = message.author.id;
-        User.getUserStatus(userId, function(err,status){
+        User.getUserStatus(userId,function(err,status){
             switch(status){
                 case 'verified':
-                    Client.reply(message, message.author + ', you\'ve already been verified and the appropriate permissions have been granted to you');
+                    Client.reply(message,message.author + ', you\'ve already been verified and the appropriate permissions have been granted to you');
                     break;
                 case 'pending':
-                    Client.reply(message, 'Checking your profile for a matching ID...', function(){
-                        User.verifyUserDiscordId(userId, function(err,result){
+                    Client.reply(message,'Checking your profile for a matching ID...',function(){
+                        User.verifyUserDiscordId(userId,function(err,result){
                             if(!err && result.length){
-                                User.setUserAsVerified(userId, function(err){
-                                    Client.reply(message, 'Thanks ' + message.author + '! You\'ve been verified and granted appropriate permissions on Discord');
+                                User.setUserAsVerified(userId,function(err){
+                                    Client.reply(message,'Thanks ' + message.author + '! You\'ve been verified and granted appropriate permissions on Discord');
                                 });
                                 //TODO: Add role granting
                             } else {
-                                Client.reply(message, 'Couldn\'t verify your account, are you sure you entered `' + userId + '` into the Discord ID field on the forums?');
+                                Client.reply(message,'Couldn\'t verify your account, are you sure you entered `' + userId + '` into the Discord ID field on the forums?');
                             }
                         });
                     });
@@ -37,32 +39,37 @@ Client.on('message', function(message){
                     var isValidEmail = email && email.length;
 
                     if(isValidEmail){
-                        Client.reply(message, 'Verifying your account with email `' + email[0] + '`...', function(){
+                        Client.reply(message,'Verifying your account with email `' + email[0] + '`...',function(){
                             User.getUserByEmail(email[0],function(err,result){
                                 if(!err && result.length){
-                                    User.setUserAsPending(userId, result[0].email, function(err){
-                                        Client.reply(message,'Your Discord ID is `' + userId + '`, enter the ID into the `Discord ID` field at https://www.criticaledge.net/account/personal-details', function(){
+                                    User.setUserAsPending(userId,result[0].email,function(err){
+                                        Client.reply(message,'Your Discord ID is `' + userId + '`, enter the ID into the `Discord ID` field at https://www.criticaledge.net/account/personal-details',function(){
                                             Client.reply(message,'Let me know once you\'ve saved it to your profile');
                                         });
                                     });
                                 } else {
-                                    Client.reply(message, 'No account with the supplied email has been found, please try again');
+                                    Client.reply(message,'No account with the supplied email has been found, please try again');
                                 }
                             });
                         });
                     } else {
-                        Client.reply(message, '`' + message.content + '` is not valid, please enter a valid email');
+                        Client.reply(message,'`' + message.content + '` is not valid, please enter a valid email');
                     }
                     break;
                 default:
-                    User.setUserAsInitiated(userId, function(err){
-                        Client.reply(message, 'Hello ' + message.author + ', your account is not verified', function(){
-                            Client.reply(message, 'Please enter the email you use for your Critical Edge Forum account');
+                    User.setUserAsInitiated(userId,function(err){
+                        Client.reply(message,'Hello ' + message.author + ', your account is not verified',function(){
+                            Client.reply(message,'Please enter the email you use for your Critical Edge Forum account');
                         });
                     });
                     break;
             }
         });
+    } else if (message.author !== BotUser && SilencedChannels.indexOf(message.channel.name.toLowerCase()) !== -1) {
+        Client.deleteMessage(message,function(err){
+            // Silent error
+        });
+
     } else if (message.author !== BotUser && message.channel.name.toLowerCase() === 'bot-testing-area') {
         if(message.content.indexOf('!slap') !== -1){
             if(message.mentions.filter((user) => user.name === 'DarkLord7854').length){
@@ -88,19 +95,25 @@ Client.on('ready', () => {
     var Channel = Channels.find((channel) => channel.name.indexOf('bot-testing') !== -1);
     var Roles = Server.roles;
 
-    var addChannels = Definitions.channels.reduce(function(toAdd,channel){
-        if(!Channels.find((item) => item.name === channel.name && item.type === channel.type)){
-            toAdd.push(channel);
+    var filteredChannels = Definitions.channels.reduce(function(filtered,channel){
+        let existingChannel = Channels.find((item) => item.name === channel.name && item.type === channel.type);
+        if(!existingChannel){
+            filtered.add.push(channel);
+        } else {
+            filtered.update.push({existingChannel,channel});
         }
-        return toAdd;
-    },[]);
+        return filtered;
+    },{add:[],update:[]});
+
+    var addChannels = filteredChannels.add;
+    var updateChannels = filteredChannels.update;
 
     var removeChannels = Channels.filter((item) => !Definitions.channels.find((channel) => channel.name === item.name));
     async.parallel(removeChannels.map((channel) => function(callback){
         Client.deleteChannel(channel, callback);
     }), function(err){
         if(err){
-            Log.error('system','Discord','Failed to delete some channels',err);
+            //Log.error('system','Discord','Failed to delete some channels',err);
         }
     });
 
@@ -109,6 +122,14 @@ Client.on('ready', () => {
     }), function(err){
         if(err){
             Log.error('system','Discord','Failed to create some channels',err);
+        }
+    });
+
+    async.parallel(updateChannels.map((item) => function(callback){
+        Client.setChannelNameAndTopic(item.existingChannel, item.channel.name, item.channel.topic, callback);
+    }), function(err){
+        if(err){
+            Log.error('system','Discord','Failed to update some channels',err);
         }
     });
 

@@ -19,6 +19,15 @@ function createServerId() {
     return id;
 }
 
+/**
+ * Returns the boolean value or true
+ * @param variable
+ * @returns {boolean}
+ */
+function getBooleanValue(variable) {
+    return typeof variable === 'boolean' ? variable : true;
+}
+
 // Find the current IP
 Log.info('system','Config','Checking machine IP');
 var ip = '127.0.0.1';
@@ -120,9 +129,73 @@ class Configuration {
     }
 }
 
+class Role {
+    generatePermissions (permissions) {
+        return {
+            // general
+            createInstantInvite: getBooleanValue(permissions.createInstantInvite),
+            kickMembers: permissions.kickMembers || false,
+            banMembers: permissions.banMembers || false,
+            manageRoles: permissions.manageRoles || false,
+            managePermissions: permissions.managePermissions || false,
+            manageChannels: permissions.manageChannels || false,
+            manageChannel: permissions.manageChannel || false,
+            manageServer: permissions.manageServer || false,
+            // text
+            readMessages: getBooleanValue(permissions.readMessages),
+            sendMessages: getBooleanValue(permissions.sendMessages),
+            sendTTSMessages: permissions.sendTTSMessages || false,
+            manageMessages: permissions.manageMessages || false,
+            embedLinks: getBooleanValue(permissions.embedLinks),
+            attachFiles: getBooleanValue(permissions.attachFiles),
+            readMessageHistory: getBooleanValue(permissions.readMessageHistory),
+            mentionEveryone: permissions.mentionEveryone || false,
+            // voice
+            voiceConnect: getBooleanValue(permissions.voiceConnect),
+            voiceSpeak: getBooleanValue(permissions.voiceSpeak),
+            voiceMuteMembers: permissions.voiceMuteMembers || false,
+            voiceDeafenMembers: permissions.voiceDeafenMembers || false,
+            voiceMoveMembers: permissions.voiceMoveMembers || false,
+            voiceUseVAD: permissions.voiceUseVAD || false
+        };
+    }
+
+    constructor (role) {
+        if(typeof role.name === 'undefined'){
+            throw new Error('Need to specify a name for the role');
+        }
+
+        this.level = role.level || 0;
+        this.hoist = role.hoist || false;
+        this.color = role.color || parseInt(0, 16);
+        this.name = role.name;
+        this.position = typeof role.position === 'undefined' ? -1 : role.position;
+        this.usergroupId = parseInt(role.usergroupId || 1, 10);
+
+        this.permissions = this.generatePermissions(role.permissions || {});
+    }
+}
+
+class Channel {
+    constructor (channel) {
+        if(typeof channel.name === 'undefined'){
+            throw new Error('Need to specify a name for the channel');
+        }
+
+        this.name = channel.name;
+        this.topic = channel.topic || '';
+        this.type = channel.type || 'text';
+        this.deleteAllMessages = channel.deleteAllMessages || false;
+        this.minLevel = channel.minLevel || 0;
+        this.isDefaultChannel = channel.isDefaultChannel || false;
+    }
+}
+
 module.exports = {
     Database,
     Redis,
     Discord,
+    Role,
+    Channel,
     Configuration
 };

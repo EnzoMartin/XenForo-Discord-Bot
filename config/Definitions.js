@@ -1,3 +1,5 @@
+const Models = require('./models');
+
 module.exports = {
     actions: {
 
@@ -6,15 +8,20 @@ module.exports = {
         {
             name: 'welcome',
             type: 'text',
+            topic: 'Please verify your user by messaging the EdgyBot',
+            deleteAllMessages: true,
             minLevel: 500
         },
         {
             name: 'general',
+            isDefaultChannel: true,
+            topic: 'Random bullshittery',
             type: 'text',
             minLevel: 1
         },
         {
             name: 'moderators',
+            topic: 'Moderator & Admin only chat',
             type: 'text',
             minLevel: 500
         },
@@ -23,13 +30,14 @@ module.exports = {
             type: 'voice',
             minLevel: 1
         }
-    ],
+    ].map((channel) => new Models.Channel(channel)),
     roles: [
         {
             level: 0,
             hoist: false,
             color: parseInt(0, 16),
             name: '@everyone',
+            usergroupId: 1,
             position: -1,
             permissions:{
                 // general
@@ -64,6 +72,7 @@ module.exports = {
             hoist: true,
             color: parseInt('FFBB00', 16),
             name: 'Member',
+            usergroupId: 2,
             position: 1,
             permissions:{
                 // general
@@ -98,6 +107,7 @@ module.exports = {
             hoist: false,
             color: parseInt('1F8B4C', 16),
             name: 'Green Donor',
+            usergroupId: 2,
             position: 2,
             permissions:{
                 // general
@@ -132,6 +142,7 @@ module.exports = {
             hoist: false,
             color: parseInt('95A5A6', 16),
             name: 'Silver Donor',
+            usergroupId: 2,
             position: 3,
             permissions:{
                 // general
@@ -166,6 +177,7 @@ module.exports = {
             hoist: false,
             color: parseInt('607D8B', 16),
             name: 'Platinum Donor',
+            usergroupId: 2,
             position: 4,
             permissions:{
                 // general
@@ -200,6 +212,7 @@ module.exports = {
             hoist: true,
             color: parseInt('9B59B6', 16),
             name: 'Moderator',
+            usergroupId: 4,
             position: 5,
             permissions:{
                 // general
@@ -234,6 +247,7 @@ module.exports = {
             hoist: true,
             color: parseInt('E67E22', 16),
             name: 'Administrator',
+            usergroupId: 3,
             position: 6,
             permissions:{
                 // general
@@ -263,5 +277,5 @@ module.exports = {
                 voiceUseVAD: true
             }
         }
-    ]
+    ].map((role) => new Models.Role(role))
 };
